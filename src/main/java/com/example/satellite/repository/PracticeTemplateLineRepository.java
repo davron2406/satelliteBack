@@ -8,5 +8,4 @@ import java.util.List;
 import java.util.UUID;
 
 public interface PracticeTemplateLineRepository extends JpaRepository<PracticeTemplateLine, UUID> {
-    List<PracticeTemplateLine> findByTemplateId(UUID templateId);
 }

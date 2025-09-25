@@ -16,8 +16,8 @@ public interface PracticeTestRepository extends JpaRepository<PracticeTest, UUID
     List<PracticeTest> findByUserIdOrderByCreatedAtDesc(UUID userId);
     List<PracticeTest> findByUserIdAndStatus(UUID userId, AttemptStatus status);
 
-    Optional<PracticeTest> getByUserIdAndPracticeTemplate(UUID userId, PracticeTemplate practiceTemplate);
 
+    Optional<PracticeTest> getByUserIdAndPracticeTemplateAndStatus(UUID userId, PracticeTemplate practiceTemplate, AttemptStatus status);
 }
 
 

@@ -1,5 +1,8 @@
 package com.example.satellite;
 
+import com.example.satellite.entity.Role;
+import com.example.satellite.entity.User;
+import com.example.satellite.entity.enums.Permission;
 import com.example.satellite.repository.RoleRepository;
 import com.example.satellite.repository.TopicRepository;
 import com.example.satellite.repository.UserRepository;
@@ -7,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
 
 @Component
 public class DataLoader implements CommandLineRunner {
@@ -27,25 +32,25 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-//        Permission[] permissions = Permission.values();
-//        Role admin = roleRepository.save(new Role("ADMIN", Arrays.asList(permissions)));
-//        Role teacher = roleRepository.save(new Role("TEACHER", Arrays.asList(permissions)));
-//        Role student = roleRepository.save(new Role("STUDENT", Arrays.asList(permissions)));
-//
-//        userRepository.save(new User("Admin", "admin","admin123@gmail.com","944288899", passwordEncoder.encode( "admin123"),admin, "123",1, true));
-//
-//
-//        for( int i = 0;i < 100; i++ ) {
-//
-//            userRepository.save(new User("User" + i, "user" + i,"user" + i +"@gmail.com","9442888" + i, passwordEncoder.encode( "user" + i),student,"123",1, true));
-//
-//        }
-//
-//        for( int i = 0;i < 10; i++ ) {
-//
-//            userRepository.save(new User("Teacher" + i, "teacher" + i,"teacher" + i +"@gmail.com","944288" + i, passwordEncoder.encode( "teacher" + i),teacher,"123",1, true));
-//
-//        }
+        Permission[] permissions = Permission.values();
+        Role admin = roleRepository.save(new Role("ADMIN", Arrays.asList(permissions)));
+        Role teacher = roleRepository.save(new Role("TEACHER", Arrays.asList(permissions)));
+        Role student = roleRepository.save(new Role("STUDENT", Arrays.asList(permissions)));
+
+        userRepository.save(new User("Admin", "admin","admin123@gmail.com","944288899", passwordEncoder.encode( "admin123"),admin, "123",1, true));
+
+
+        for( int i = 0;i < 100; i++ ) {
+
+            userRepository.save(new User("User" + i, "user" + i,"user" + i +"@gmail.com","9442888" + i, passwordEncoder.encode( "user" + i),student,"123",1, true));
+
+        }
+
+        for( int i = 0;i < 10; i++ ) {
+
+            userRepository.save(new User("Teacher" + i, "teacher" + i,"teacher" + i +"@gmail.com","944288" + i, passwordEncoder.encode( "teacher" + i),teacher,"123",1, true));
+
+        }
 
 
 //

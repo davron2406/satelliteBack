@@ -2,13 +2,17 @@ package com.example.satellite.controller;
 
 import com.example.satellite.entity.User;
 import com.example.satellite.payload.ApiResponse;
+import com.example.satellite.payload.ChangePasswordDTO;
 import com.example.satellite.payload.LoginDTO;
 import com.example.satellite.payload.RegisterDTO;
 import com.example.satellite.security.JwtProvider;
 import com.example.satellite.service.AuthService;
+import com.example.satellite.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -31,6 +35,9 @@ public class AuthController {
     @Autowired
     JwtProvider jwtProvider;
 
+    @Autowired
+    UserService userService;
+
 
     @PostMapping("/login")
     public HttpEntity<?> login(@RequestBody LoginDTO loginDto){
@@ -50,6 +57,21 @@ public class AuthController {
         ApiResponse apiResponse = authService.registerUser(registerDto);
         return ResponseEntity.status(200).body(apiResponse);
     }
+
+    @PostMapping("/change-password")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> changePassword(
+                                            @Valid @RequestBody ChangePasswordDTO body) {
+        // Resolve your domain User from principal
+
+        User user = userService.requireUser(); // adjust to your setup (see principal class below)
+        authService.changePassword(user, body);
+        return ResponseEntity.ok().body(new Message("Password changed successfully."));
+    }
+
+    // simple response
+    record Message(String message) {}
+
 
     @PostMapping("/verifyEmail")
     public  HttpEntity<?> verifyEmail(@RequestParam String emailCode, @RequestParam String email){

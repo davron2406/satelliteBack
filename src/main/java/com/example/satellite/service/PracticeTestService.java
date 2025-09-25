@@ -29,7 +29,6 @@ public class PracticeTestService {
 
     private final PracticeTemplateRepository templateRepo;
     private final PracticeTemplateLineRepository lineRepo;
-    private final PracticeTemplateLineTopicRepository lineTopicRepo;
 
     private final PracticeTestRepository testRepo;
     private final PracticeTestQuestionRepository testQuestionRepo;
@@ -48,7 +47,6 @@ public class PracticeTestService {
 
     public PracticeTestService(PracticeTemplateRepository templateRepo,
                                PracticeTemplateLineRepository lineRepo,
-                               PracticeTemplateLineTopicRepository lineTopicRepo,
                                PracticeTestRepository testRepo,
                                PracticeTestQuestionRepository testQuestionRepo,
                                QuestionRepository questionRepo,
@@ -56,7 +54,6 @@ public class PracticeTestService {
                                PracticeTestResultRepository p) {
         this.templateRepo = templateRepo;
         this.lineRepo = lineRepo;
-        this.lineTopicRepo = lineTopicRepo;
         this.testRepo = testRepo;
         this.testQuestionRepo = testQuestionRepo;
         this.questionRepo = questionRepo;
@@ -223,20 +220,18 @@ public class PracticeTestService {
     // Helper functions
     // =================
     private List<Question> pickQuestionsFromTemplate(PracticeTemplate tpl) {
-        List<PracticeTemplateLine> lines = lineRepo.findByTemplateId(tpl.getId());
+        List<PracticeTemplateLine> lines = tpl.getPracticeTemplateLines();
         List<Question> picked = new ArrayList<>();
         Set<UUID> used = new HashSet<>();
 
         for (PracticeTemplateLine line : lines) {
-            List<Topic> topics = lineTopicRepo.findByLineId(line.getId()).stream()
-                    .map(PracticeTemplateLineTopic::getTopic)
-                    .toList();
+            Topic topic = line.getTopic();
 
             // Pool across topics for this difficulty
             List<Question> pool = new ArrayList<>();
-            for (Topic t : topics) {
-                pool.addAll(questionRepo.findByTopicIdAndDifficulty(t.getId(), line.getDifficulty()));
-            }
+
+                pool.addAll(questionRepo.findByTopicIdAndDifficulty(topic.getId(), line.getDifficulty()));
+
 
             // Exclude already selected
             pool.removeIf(q -> used.contains(q.getId()));
@@ -373,6 +368,9 @@ public class PracticeTestService {
         result.setTotalCount(practiceTests.size());
         result.setSubmittedAt(OffsetDateTime.now());
         result = practiceTestResultRepository.save(result);
+
+        pt.setStatus(AttemptStatus.SUBMITTED);
+        practiceTestRepository.save(pt);
 
         return new SubmitPracticeTestResponse(
                 result.getId(),

@@ -10,6 +10,10 @@ import com.example.satellite.payload.StartTestResponse;
 import com.example.satellite.repository.PracticeTemplateRepository;
 import com.example.satellite.service.PracticeTemplateService;
 import com.example.satellite.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -40,10 +44,11 @@ public class PracticeTemplateController {
 
     @PreAuthorize("hasAnyAuthority('GET_ALL_PRACTICE_TESTS')")
     @GetMapping
-    public List<OptionDTO> list() {
-        return repo.findAll().stream()
-                .map(t -> toOption(t))
-                .toList();
+    public Page<OptionDTO> list(
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC)
+            Pageable pageable
+    ) {
+        return repo.findAll(pageable).map(this::toOption);
     }
 
 
@@ -76,6 +81,17 @@ public class PracticeTemplateController {
         return service.searchByName(name);
     }
 
+
+    @PreAuthorize("hasAnyAuthority('DELETE_PRACTICE_TEST')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteTemplate(@PathVariable UUID id) {
+        try {
+            service.deleteTemplate(id);
+            return ResponseEntity.ok().body("Template deleted successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Failed to delete template: " + e.getMessage());
+        }
+    }
 
 }
 

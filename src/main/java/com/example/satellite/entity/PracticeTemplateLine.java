@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 
 @EqualsAndHashCode(callSuper = true)
@@ -15,15 +17,17 @@ import lombok.EqualsAndHashCode;
 public class PracticeTemplateLine extends AbstractEntity {
 
 
-    @ManyToOne(fetch=FetchType.LAZY, optional=false)
-    @JoinColumn(name="template_id", nullable=false)
-    private PracticeTemplate template;
+
 
     @Enumerated(EnumType.STRING) @Column(nullable=false, length=16)
     private Difficulty difficulty;
 
     @Min(0) @Column(nullable=false)
     private Integer count;
+
+    @ManyToOne(fetch=FetchType.LAZY, optional=false)
+    @JoinColumn(name="topic_id", nullable=false)
+    private Topic topic;
 
 }
 
