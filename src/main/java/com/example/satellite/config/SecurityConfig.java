@@ -55,7 +55,7 @@ public class SecurityConfig{
         CorsConfiguration cfg = new CorsConfiguration();
 
         // Do NOT use "*" when allowCredentials=true. List your front-end origins.
-        cfg.setAllowedOrigins(List.of("http://localhost:5173", "http://127.0.0.1:5173"));
+        cfg.setAllowedOrigins(List.of("https://satellitess.com", "http://127.0.0.1:5173"));
 
         cfg.setAllowedMethods(List.of("GET","POST","PUT","PATCH","DELETE","OPTIONS"));
         cfg.setAllowedHeaders(List.of("Content-Type","Authorization","X-Requested-With","Accept"));
